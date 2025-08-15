@@ -38,8 +38,7 @@ df_ventas["empresa_corregida"] = df_ventas["empresa"].apply(lambda x : encontrar
 
 #print(df_ventas.tail(10))
 
-df_final = df_ventas.merge(df_vendedores, left_on="empresa_corregida", right_on="empresa", how="left")
-#drop(columns=["empresa_y"])
+df_final = df_ventas.merge(df_vendedores, left_on="empresa_corregida", right_on="empresa", how="left").drop(columns=["empresa_y"])
 
 # corregir nombres de las columnas
 
@@ -56,3 +55,21 @@ print(df_sin_match.head())
 df_final.to_csv("resultado_cruce.csv", index=False)
 
 df_sin_match.to_csv("resultado_sin_cruce.csv", index=False)
+
+#SEGUNDA ETAPA
+
+import matplotlib.pyplot as plt
+from fpdf import FPDF
+from datetime import datetime
+
+#VENTAS POR EMPRESA
+
+ventas_por_empresa = df_final.groupby("empresa_corregida")["monto"].sum().reset_index()
+
+ventas_por_empresa.sort_values(by="monto",ascending=False, inplace=True)
+
+#print(ventas_por_empresa.head(15))
+
+ventas_por_vendedor= df_final.groupby("vendedor")["monto"].sum().reset_index()
+ 
+ventas_por_vendedor.sort_values(by="monto", ascending=False, inplace=True)
